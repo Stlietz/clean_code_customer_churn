@@ -1,6 +1,16 @@
+"""
+chrun_script_logging_and_tests.py
+
+testing and logging script for churn_library.py.
+Testing all functions and logging workflow errors/successes
+
+Author: Stefan Lietz
+Date: 19/4/2025
+"""
+
 import os
 import logging
-import churn_library_solution as cls
+from churn_library import import_data
 
 logging.basicConfig(
     filename='./logs/churn_library.log',
@@ -52,7 +62,7 @@ def test_train_models(train_models):
 
 
 if __name__ == "__main__":
-	pass
+	test_import(import_data)
 
 
 

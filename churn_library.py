@@ -1,8 +1,22 @@
 # library doc string
+"""
+churn_library.py
+
+completes the process for solving the data science process to idenfity customer churn including:
+- EDA
+- Feature Engineering (including encoding of categorical variables)
+- Model Training
+- Prediction
+- Model Evaluation
+
+Author: Stefan Lietz
+Date: 19/4/2025
+"""
 
 
 # import libraries
 import os
+import pandas as pd
 os.environ['QT_QPA_PLATFORM']='offscreen'
 
 
@@ -16,7 +30,8 @@ def import_data(pth):
     output:
             df: pandas dataframe
     '''	
-    pass
+    df = pd.read_csv(fr"{pth}")
+    return df
 
 
 def perform_eda(df):
@@ -108,3 +123,10 @@ def train_models(X_train, X_test, y_train, y_test):
               None
     '''
     pass
+
+
+
+if __name__ == "__main__":
+    # import data
+    df = import_data("./data/bank_data.csv")
+    print(df.head())
