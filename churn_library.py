@@ -207,12 +207,28 @@ def train_models(X_train, X_test, y_train, y_test):
 	
 	joblib.dump(cv_rfc.best_estimator_, './models/rfc_model.pkl')
 	joblib.dump(lrc, './models/logistic_model.pkl')
+ 
+	y_train_preds_rf = cv_rfc.best_estimator_.predict(X_train)
+	y_test_preds_rf = cv_rfc.best_estimator_.predict(X_test)
 
+	y_train_preds_lr = lrc.predict(X_train)
+	y_test_preds_lr = lrc.predict(X_test)
+
+	"""
+	Call the following
+	classification_report_image(y_train,
+                                y_test,
+                                y_train_preds_lr,
+                                y_train_preds_rf,
+                                y_test_preds_lr,
+                                y_test_preds_rf)
+                                
+	feature_importance_plot(model, X_data, output_pth)
+ 	"""
 
 
 if __name__ == "__main__":
     df = import_data("./data/bank_data.csv")
     eda_df = perform_eda(df)
-    df_encode = encoder_helper(eda_df)
     X_train, X_test, y_train, y_test = perform_feature_engineering(df_encode)
-    train_models(X_train, X_test, y_train, y_test )
+    train_models(X_train, X_test, y_train, y_test)

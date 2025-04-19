@@ -103,16 +103,24 @@ def test_perform_feature_engineering():
  
 
 
-def test_train_models(train_models):
+def test_train_models():
 	'''
 	test train_models
 	'''
+	models = os.listdir("./models")
+	for file in ['logistic_model.pkl', 'rfc_model.pkl']:
+		try:
+			assert file in models
+			logging.info(f"test_train_models: {file} found in models folder")
+		except AssertionError:
+			logging.error(f"test_train_models: {file} does not exist")
 
 if __name__ == "__main__":
 	test_import()
 	test_eda()
 	test_encoder_helper()
 	test_perform_feature_engineering()
+	test_train_models()
 
 
 

@@ -8,3 +8,5 @@ root - INFO - test_eda: hist_churn.png found in images/eda
 root - INFO - test_eda: hist_customer_age.png found in images/eda
 root - INFO - test_encoder_helper: SUCCESS, encoding ran
 root - INFO - test_perform_feature_engineering: SUCCESS, data split into train and test sets
+root - INFO - test_train_models: logistic_model.pkl found in models folder
+root - INFO - test_train_models: rfc_model.pkl found in models folder
