@@ -183,17 +183,30 @@ def feature_importance_plot(model, X_data, output_pth):
     pass
 
 def train_models(X_train, X_test, y_train, y_test):
-    '''
-    train, store model results: images + scores, and store models
-    input:
-              X_train: X training data
-              X_test: X testing data
-              y_train: y training data
-              y_test: y testing data
-    output:
-              None
-    '''
-    pass
+	'''
+	train, store model results: images + scores, and store models
+	input:
+				X_train: X training data
+				X_test: X testing data
+				y_train: y training data
+				y_test: y testing data
+	output:
+				None
+	'''
+	rfc = RandomForestClassifier(random_state=42)
+	lrc = LogisticRegression(solver='lbfgs', max_iter=3000)
+	param_grid = { 
+		'n_estimators': [200, 500],
+		'max_features': ['auto', 'sqrt'],
+		'max_depth' : [4,5,100],
+		'criterion' :['gini', 'entropy']
+	}
+	cv_rfc = GridSearchCV(estimator=rfc, param_grid=param_grid, cv=3, n_jobs=-1)
+	cv_rfc.fit(X_train, y_train)
+	lrc.fit(X_train, y_train)
+	
+	joblib.dump(cv_rfc.best_estimator_, './models/rfc_model.pkl')
+	joblib.dump(lrc, './models/logistic_model.pkl')
 
 
 
@@ -202,4 +215,4 @@ if __name__ == "__main__":
     eda_df = perform_eda(df)
     df_encode = encoder_helper(eda_df)
     X_train, X_test, y_train, y_test = perform_feature_engineering(df_encode)
-    print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
+    train_models(X_train, X_test, y_train, y_test )
