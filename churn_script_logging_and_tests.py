@@ -72,12 +72,14 @@ def test_encoder_helper():
 		logging.info(f"test_encoder_helper: SUCCESS, encoding ran")
 		if df_encode.shape[1] <= df.shape[1]:
 			logging.warning(f"test_encoder_helper: encoded df has only {df_encode.shape[1]} columns, i.e. less or equal than original df with {df.shape[1]} columns")
-	except:
+	except Exception as e:
 		logging.error(f"test_encoder_helper: encoding did not work")
+		raise e
 	try:
 		pd.testing.assert_frame_equal(df, df_encode[df.columns])
 	except AssertionError:
 		logging.error("encoded dataframe and original df are not equal w.r.t. original columns")
+		raise AssertionError("encoded dataframe and original df are not equal w.r.t. original columns")
      
 
 
