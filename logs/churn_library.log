@@ -1,8 +1,9 @@
 root - INFO - Testing import_data: SUCCESS
-root - INFO - Testing import_data: dataframe contains 10127 rows and 22 columns
+root - INFO - Testing import_data: dataframe contains 10127 rows and 21 columns
 root - INFO - test_eda: SUCCESS, no NaN values
 root - INFO - test_eda: countplot_marital_status.png found in images/eda
 root - INFO - test_eda: dist_total_transaction.png found in images/eda
 root - INFO - test_eda: heatmap_all_cols.png found in images/eda
 root - INFO - test_eda: hist_churn.png found in images/eda
 root - INFO - test_eda: hist_customer_age.png found in images/eda
+root - INFO - test_encoder_helper: SUCCESS, encoding ran

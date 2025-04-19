@@ -45,7 +45,7 @@ def import_data(pth):
     output:
             df: pandas dataframe
     '''	
-    df = pd.read_csv(fr"{pth}")
+    df = pd.read_csv(fr"{pth}", index_col=0)
     return df
 
 
@@ -110,14 +110,14 @@ def encoder_helper(df, category_lst=['Gender','Education_Level','Marital_Status'
 	'''
 	df_encode = df.copy(deep=True)
 	for cat_col in category_lst:
-		churn_map = dict(df.groupby(cat_col).mean()['Churn'])
-		df[cat_col + response] = df[cat_col].map(churn_map)
+		churn_map = dict(df_encode.groupby(cat_col).mean()['Churn'])
+		df_encode[cat_col +"_"+ response] = df_encode[cat_col].map(churn_map)
   
 	return df_encode
 
 
 
-def perform_feature_engineering(df, response):
+def perform_feature_engineering(df, response="Churn"):
     '''
     input:
               df: pandas dataframe
@@ -129,6 +129,7 @@ def perform_feature_engineering(df, response):
               y_train: y training data
               y_test: y testing data
     '''
+    
 
 def classification_report_image(y_train,
                                 y_test,
@@ -182,8 +183,9 @@ def train_models(X_train, X_test, y_train, y_test):
 
 
 if __name__ == "__main__":
-    # import data
     df = import_data("./data/bank_data.csv")
     eda_df = perform_eda(df)
     df_encode = encoder_helper(eda_df)
-    print(df.head())
+    print(df.shape)
+    print(df_encode.shape)
+    print(df_encode.head())
