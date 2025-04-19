@@ -16,8 +16,23 @@ Date: 19/4/2025
 
 # import libraries
 import os
+import shap
+import joblib
 import pandas as pd
-os.environ['QT_QPA_PLATFORM']='offscreen'
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.preprocessing import normalize
+from sklearn.model_selection import train_test_split
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
+
+from sklearn.metrics import plot_roc_curve, classification_report
+
+os.environ['QT_QPA_PLATFORM']='offscreen' # For matplotlib and seaborn - Don’t try to open any graphical window — just render off-screen
 
 
 
@@ -41,9 +56,42 @@ def perform_eda(df):
             df: pandas dataframe
 
     output:
-            None
+            eda_df: pandas dataframe with new churn column
     '''
-    pass
+    # Make deep copy of originally loaded DataFrame
+    eda_df = df.copy(deep=True)
+
+    # Column for Customer Churn
+    eda_df['Churn'] = eda_df['Attrition_Flag'].apply(lambda val: 0 if val=="Existing Customer" else 1)
+
+    #  Histogram of Churn
+    plt.figure(figsize=(15, 8))
+    eda_df['Churn'].hist()
+    plt.savefig(fname='./images/eda/hist_churn.png')
+
+    # Histogram for Customer Age
+    plt.figure(figsize=(15, 8))
+    eda_df['Customer_Age'].hist()
+    plt.savefig(fname='./images/eda/hist_customer_age.png')
+
+    # Countplot Marital Status
+    plt.figure(figsize=(15, 8))
+    eda_df.Marital_Status.value_counts('normalize').plot(kind='bar')
+    plt.savefig(fname='./images/eda/countplot_marital_status.png')
+
+    # Distribution of total transaction
+    plt.figure(figsize=(15, 8))
+    sns.histplot(eda_df['Total_Trans_Ct'],kde=True);
+    plt.savefig(fname='./images/eda/dist_total_transaction.png')
+
+    # Heatmap all columns
+    plt.figure(figsize=(20, 10))
+    sns.heatmap(eda_df.corr(), annot=False, cmap='Dark2_r', linewidths=2)
+    plt.savefig(fname='./images/eda/heatmap_all_cols.png')
+
+    # Return dataframe
+    return eda_df
+
 
 
 def encoder_helper(df, category_lst, response):
@@ -59,6 +107,7 @@ def encoder_helper(df, category_lst, response):
     output:
             df: pandas dataframe with new columns for
     '''
+    #df['Churn'] = df['Attrition_Flag'].apply(lambda val: 0 if val == "Existing Customer" else 1)
     pass
 
 
@@ -129,4 +178,5 @@ def train_models(X_train, X_test, y_train, y_test):
 if __name__ == "__main__":
     # import data
     df = import_data("./data/bank_data.csv")
+    edf_df = perform_eda(df)
     print(df.head())
