@@ -10,7 +10,7 @@ Date: 19/4/2025
 
 import os
 import logging
-from churn_library import import_data, perform_eda, encoder_helper
+from churn_library import import_data, perform_eda, encoder_helper, perform_feature_engineering
 import pandas as pd
 
 logging.basicConfig(
@@ -49,7 +49,7 @@ def test_eda():
 	if df.isnull().sum().sum() > 0:
 		logging.warning(f"test_eda: dataframe contains {df.isnull().sum().sum()} NaN values")
 	else:
-		logging.info("test_eda: SUCCESS, no NaN values")
+		logging.info("test_eda: No NaN values")
 	# get all file names in folder images/eda:
 	images = os.listdir("./images/eda")
 	for file in ['countplot_marital_status.png', 'dist_total_transaction.png', 'heatmap_all_cols.png', 'hist_churn.png', 'hist_customer_age.png']:
@@ -81,10 +81,26 @@ def test_encoder_helper():
      
 
 
-def test_perform_feature_engineering(perform_feature_engineering):
+def test_perform_feature_engineering():
 	'''
 	test perform_feature_engineering
 	'''
+	df = import_data("./data/bank_data.csv")
+	df = perform_eda(df)
+	try:
+		X_train, X_test, y_train, y_test  = perform_feature_engineering(df)
+	except Exception as e:
+		logging.error(f"test_perform_feature_engineering: {e}")
+	try:
+		assert X_train.shape[0] > 0
+		assert X_test.shape[0] > 0
+		assert y_train.shape[0] > 0
+		assert y_test.shape[0] > 0
+		logging.info(f"test_perform_feature_engineering: SUCCESS, data split into train and test sets")
+	except AssertionError as err:
+		logging.error("test_perform_feature_engineering: The file doesn't appear to have rows and columns")
+		raise err
+ 
 
 
 def test_train_models(train_models):
@@ -96,6 +112,7 @@ if __name__ == "__main__":
 	test_import()
 	test_eda()
 	test_encoder_helper()
+	test_perform_feature_engineering()
 
 
 
