@@ -94,21 +94,27 @@ def perform_eda(df):
 
 
 
-def encoder_helper(df, category_lst, response):
-    '''
-    helper function to turn each categorical column into a new column with
-    propotion of churn for each category - associated with cell 15 from the notebook
+def encoder_helper(df, category_lst=['Gender','Education_Level','Marital_Status','Income_Category','Card_Category'], response="Churn"):
 
-    input:
-            df: pandas dataframe
-            category_lst: list of columns that contain categorical features
-            response: string of response name [optional argument that could be used for naming variables or index y column]
+	'''
+	helper function to turn each categorical column into a new column with
+	propotion of churn for each category - associated with cell 15 from the notebook
 
-    output:
-            df: pandas dataframe with new columns for
-    '''
-    #df['Churn'] = df['Attrition_Flag'].apply(lambda val: 0 if val == "Existing Customer" else 1)
-    pass
+	input:
+			df: pandas dataframe
+			category_lst: list of columns that contain categorical features
+			response: string of response name [optional argument that could be used for naming variables or index y column]
+
+	output:
+			df: pandas dataframe with new columns for further proceeding
+	'''
+	df_encode = df.copy(deep=True)
+	for cat_col in category_lst:
+		churn_map = dict(df.groupby(cat_col).mean()['Churn'])
+		df[cat_col + response] = df[cat_col].map(churn_map)
+  
+	return df_encode
+
 
 
 def perform_feature_engineering(df, response):
@@ -178,5 +184,6 @@ def train_models(X_train, X_test, y_train, y_test):
 if __name__ == "__main__":
     # import data
     df = import_data("./data/bank_data.csv")
-    edf_df = perform_eda(df)
+    eda_df = perform_eda(df)
+    df_encode = encoder_helper(eda_df)
     print(df.head())

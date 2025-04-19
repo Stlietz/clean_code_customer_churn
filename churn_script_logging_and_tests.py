@@ -10,7 +10,7 @@ Date: 19/4/2025
 
 import os
 import logging
-from churn_library import import_data, perform_eda
+from churn_library import import_data, perform_eda, encoder_helper
 
 logging.basicConfig(
     filename='./logs/churn_library.log',
@@ -59,10 +59,15 @@ def test_eda():
 			logging.error(f"test_eda: {file} does not exist")
 
 
-def test_encoder_helper(encoder_helper):
+def test_encoder_helper():
 	'''
 	test encoder helper
 	'''
+	df = import_data("./data/bank_data.csv")
+	try:
+		df_encode = encoder_helper(df)
+	except:
+		Print("xx")
 
 
 def test_perform_feature_engineering(perform_feature_engineering):
@@ -80,6 +85,7 @@ def test_train_models(train_models):
 if __name__ == "__main__":
 	test_import()
 	test_eda()
+	test_encoder_helper()
 
 
 
