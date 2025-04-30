@@ -167,7 +167,8 @@ def classification_report_image(y_train,
              None
     '''
     # RANDOM FOREST
-    plt.rc('figure', figsize=(5, 5))
+    plt.figure(figsize=(6, 6))
+    plt.rc('figure', figsize=(6, 6))
     plt.text(0.01, 1.25, str('Random Forest Train'), {'fontsize': 10}, fontproperties = 'monospace')
     plt.text(0.01, 0.05, str(classification_report(y_test, y_test_preds_rf)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
     plt.text(0.01, 0.6, str('Random Forest Test'), {'fontsize': 10}, fontproperties = 'monospace')
@@ -176,7 +177,8 @@ def classification_report_image(y_train,
     plt.savefig(fname='./images/results/rf_results.png')
     
     # LOGISTIC REGRESSION
-    plt.rc('figure', figsize=(5, 5))
+    plt.figure(figsize=(6, 6))
+    plt.rc('figure', figsize=(6, 6))
     plt.text(0.01, 1.25, str('Logistic Regression Train'), {'fontsize': 10}, fontproperties = 'monospace')
     plt.text(0.01, 0.05, str(classification_report(y_train, y_train_preds_lr)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
     plt.text(0.01, 0.6, str('Logistic Regression Test'), {'fontsize': 10}, fontproperties = 'monospace')
@@ -262,4 +264,4 @@ if __name__ == "__main__":
     df = import_data("./data/bank_data.csv")
     eda_df = perform_eda(df)
     X_train, X_test, y_train, y_test = perform_feature_engineering(eda_df)
-    #train_models(X_train, X_test, y_train, y_test)
+    train_models(X_train, X_test, y_train, y_test)

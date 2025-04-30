@@ -1,12 +1,15 @@
 root - INFO - Testing import_data: SUCCESS
 root - INFO - Testing import_data: dataframe contains 10127 rows and 21 columns
 root - INFO - test_eda: No NaN values
-root - INFO - test_eda: countplot_marital_status.png found in images/eda
-root - INFO - test_eda: dist_total_transaction.png found in images/eda
-root - INFO - test_eda: heatmap_all_cols.png found in images/eda
-root - INFO - test_eda: hist_churn.png found in images/eda
-root - INFO - test_eda: hist_customer_age.png found in images/eda
+root - INFO - test_eda: SUCESS, countplot_marital_status.png found in images/eda
+root - INFO - test_eda: SUCESS, dist_total_transaction.png found in images/eda
+root - INFO - test_eda: SUCESS, heatmap_all_cols.png found in images/eda
+root - INFO - test_eda: SUCESS, hist_churn.png found in images/eda
+root - INFO - test_eda: SUCESS, hist_customer_age.png found in images/eda
 root - INFO - test_encoder_helper: SUCCESS, encoding ran
 root - INFO - test_perform_feature_engineering: SUCCESS, data split into train and test sets
-root - INFO - test_train_models: logistic_model.pkl found in models folder
-root - INFO - test_train_models: rfc_model.pkl found in models folder
+root - INFO - test_train_models: SUCCESS, logistic_model.pkl found in models folder
+root - INFO - test_train_models: SUCCESS, rfc_model.pkl found in models folder
+root - INFO - test_reult_plots: SUCCESS, lr_results.png found in images/results
+root - INFO - test_reult_plots: SUCCESS, rf_results.png found in images/results
+root - INFO - test_reult_plots: SUCCESS, feature_importance.png found in images/results

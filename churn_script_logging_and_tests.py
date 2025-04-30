@@ -10,7 +10,7 @@ Date: 19/4/2025
 
 import os
 import logging
-from churn_library import import_data, perform_eda, encoder_helper, perform_feature_engineering
+from churn_library import import_data, perform_eda, encoder_helper, perform_feature_engineering#, train_models, feature_importance_plot, classification_report_image
 import pandas as pd
 
 logging.basicConfig(
@@ -55,7 +55,7 @@ def test_eda():
 	for file in ['countplot_marital_status.png', 'dist_total_transaction.png', 'heatmap_all_cols.png', 'hist_churn.png', 'hist_customer_age.png']:
 		try:
 			assert file in images
-			logging.info(f"test_eda: {file} found in images/eda")
+			logging.info(f"test_eda: SUCESS, {file} found in images/eda")
 		except AssertionError:
 			logging.error(f"test_eda: {file} does not exist")
 
@@ -113,9 +113,21 @@ def test_train_models():
 	for file in ['logistic_model.pkl', 'rfc_model.pkl']:
 		try:
 			assert file in models
-			logging.info(f"test_train_models: {file} found in models folder")
+			logging.info(f"test_train_models: SUCCESS, {file} found in models folder")
 		except AssertionError:
 			logging.error(f"test_train_models: {file} does not exist")
+
+def test_result_plots():
+	'''
+	test feature_importance_plot and classification_report_image
+	'''
+	images = os.listdir("./images/results")
+	for file in ['lr_results.png', 'rf_results.png', 'feature_importance.png']:
+		try:
+			assert file in images
+			logging.info(f"test_reult_plots: SUCCESS, {file} found in images/results")
+		except AssertionError:
+			logging.error(f"test_reult_plots: {file} does not exist")
 
 if __name__ == "__main__":
 	test_import()
@@ -123,6 +135,7 @@ if __name__ == "__main__":
 	test_encoder_helper()
 	test_perform_feature_engineering()
 	test_train_models()
+	test_result_plots()
 
 
 
