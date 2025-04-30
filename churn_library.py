@@ -166,10 +166,26 @@ def classification_report_image(y_train,
     output:
              None
     '''
-    pass
+    # RANDOM FOREST
+    plt.rc('figure', figsize=(5, 5))
+    plt.text(0.01, 1.25, str('Random Forest Train'), {'fontsize': 10}, fontproperties = 'monospace')
+    plt.text(0.01, 0.05, str(classification_report(y_test, y_test_preds_rf)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
+    plt.text(0.01, 0.6, str('Random Forest Test'), {'fontsize': 10}, fontproperties = 'monospace')
+    plt.text(0.01, 0.7, str(classification_report(y_train, y_train_preds_rf)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
+    plt.axis('off')
+    plt.savefig(fname='./images/results/rf_results.png')
+    
+    # LOGISTIC REGRESSION
+    plt.rc('figure', figsize=(5, 5))
+    plt.text(0.01, 1.25, str('Logistic Regression Train'), {'fontsize': 10}, fontproperties = 'monospace')
+    plt.text(0.01, 0.05, str(classification_report(y_train, y_train_preds_lr)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
+    plt.text(0.01, 0.6, str('Logistic Regression Test'), {'fontsize': 10}, fontproperties = 'monospace')
+    plt.text(0.01, 0.7, str(classification_report(y_test, y_test_preds_lr)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
+    plt.axis('off')
+    plt.savefig(fname='./images/results/lr_results.png')
 
 
-def feature_importance_plot(model, X_data, output_pth):
+def feature_importance_plot(model, X_data, output_pth="./images/results/"):
     '''
     creates and stores the feature importances in pth
     input:
@@ -180,55 +196,70 @@ def feature_importance_plot(model, X_data, output_pth):
     output:
              None
     '''
-    pass
+    # Calculate feature importances
+    importances = model.best_estimator_.feature_importances_
+    # Sort feature importances in descending order
+    indices = np.argsort(importances)[::-1]
+
+    # Rearrange feature names so they match the sorted feature importances
+    names = [X_data.columns[i] for i in indices]
+
+    # Create plot
+    plt.figure(figsize=(20,5))
+
+    # Create plot title
+    plt.title("Feature Importance")
+    plt.ylabel('Importance')
+
+    # Add bars
+    plt.bar(range(X_data.shape[1]), importances[indices])
+
+    # Add feature names as x-axis labels
+    plt.xticks(range(X_data.shape[1]), names, rotation=90)
+    
+    # save file
+    plt.savefig(fname=os.path.join(output_pth, 'feature_importance.png'))
+
 
 def train_models(X_train, X_test, y_train, y_test):
-	'''
-	train, store model results: images + scores, and store models
-	input:
-				X_train: X training data
-				X_test: X testing data
-				y_train: y training data
-				y_test: y testing data
-	output:
-				None
-	'''
-	rfc = RandomForestClassifier(random_state=42)
-	lrc = LogisticRegression(solver='lbfgs', max_iter=3000)
-	param_grid = { 
-		'n_estimators': [200, 500],
-		'max_features': ['auto', 'sqrt'],
-		'max_depth' : [4,5,100],
-		'criterion' :['gini', 'entropy']
-	}
-	cv_rfc = GridSearchCV(estimator=rfc, param_grid=param_grid, cv=3, n_jobs=-1)
-	cv_rfc.fit(X_train, y_train)
-	lrc.fit(X_train, y_train)
-	
-	joblib.dump(cv_rfc.best_estimator_, './models/rfc_model.pkl')
-	joblib.dump(lrc, './models/logistic_model.pkl')
- 
-	y_train_preds_rf = cv_rfc.best_estimator_.predict(X_train)
-	y_test_preds_rf = cv_rfc.best_estimator_.predict(X_test)
+    '''
+    train, store model results: images + scores, and store models
+    input:
+                X_train: X training data
+                X_test: X testing data
+                y_train: y training data
+                y_test: y testing data
+    output:
+                None
+    '''
+    rfc = RandomForestClassifier(random_state=42)
+    lrc = LogisticRegression(solver='lbfgs', max_iter=3000)
+    param_grid = { 
+        'n_estimators': [200, 500],
+        'max_features': ['auto', 'sqrt'],
+        'max_depth' : [4,5,100],
+        'criterion' :['gini', 'entropy']
+    }
+    cv_rfc = GridSearchCV(estimator=rfc, param_grid=param_grid, cv=3, n_jobs=-1)
+    cv_rfc.fit(X_train, y_train)
+    lrc.fit(X_train, y_train)
 
-	y_train_preds_lr = lrc.predict(X_train)
-	y_test_preds_lr = lrc.predict(X_test)
+    joblib.dump(cv_rfc.best_estimator_, './models/rfc_model.pkl')
+    joblib.dump(lrc, './models/logistic_model.pkl')
 
-	"""
-	Call the following
-	classification_report_image(y_train,
-                                y_test,
-                                y_train_preds_lr,
-                                y_train_preds_rf,
-                                y_test_preds_lr,
-                                y_test_preds_rf)
-                                
-	feature_importance_plot(model, X_data, output_pth)
- 	"""
+    y_train_preds_rf = cv_rfc.best_estimator_.predict(X_train)
+    y_test_preds_rf = cv_rfc.best_estimator_.predict(X_test)
+
+    y_train_preds_lr = lrc.predict(X_train)
+    y_test_preds_lr = lrc.predict(X_test)
+    
+    classification_report_image(y_train, y_test, y_train_preds_lr, y_train_preds_rf,y_test_preds_lr, y_test_preds_rf)
+    
+    feature_importance_plot(cv_rfc, X_test)
 
 
 if __name__ == "__main__":
     df = import_data("./data/bank_data.csv")
     eda_df = perform_eda(df)
-    X_train, X_test, y_train, y_test = perform_feature_engineering(df_encode)
-    train_models(X_train, X_test, y_train, y_test)
+    X_train, X_test, y_train, y_test = perform_feature_engineering(eda_df)
+    #train_models(X_train, X_test, y_train, y_test)
