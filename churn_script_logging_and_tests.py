@@ -116,7 +116,7 @@ def test_perform_feature_engineering():
             "test_perform_feature_engineering: SUCCESS, data split into train and test sets")
     except AssertionError as err:
         logging.error(
-            "test_perform_feature_engineering: The file doesn't appear to have rows and columns")
+            "test_perform_feature_engineering: One or more files appear to not have rows and/or columns")
         raise err
 
 
