@@ -16,14 +16,13 @@ Date: 19/4/2025
 
 # import libraries
 import os
-import shap
+# import shap
 import joblib
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from sklearn.preprocessing import normalize
 from sklearn.model_selection import train_test_split
 
 from sklearn.linear_model import LogisticRegression
@@ -37,7 +36,7 @@ from sklearn.metrics import plot_roc_curve, classification_report
 os.environ['QT_QPA_PLATFORM'] = 'offscreen'
 
 
-def import_data(pth):
+def import_data(pth: str) -> pd.DataFrame:
     '''
     returns dataframe for the csv found at pth
 
@@ -111,7 +110,8 @@ def encoder_helper(
     input:
                     df: pandas dataframe
                     category_lst: list of columns that contain categorical features
-                    response: string of response name [optional argument that could be used for naming variables or index y column]
+                    response: string of response name [optional argument,
+                    that could be used for naming variables or index y column]
 
     output:
                     df: pandas dataframe with new columns for further proceeding
@@ -128,11 +128,13 @@ def perform_feature_engineering(df, response="Churn"):
     '''
     input:
                             df: pandas dataframe
-                            response: string of response name [optional argument that could be used for naming variables or index y column]
+                            response: string of response name [optional argument,
+                            that could be used for naming 
+                            variables or index y column]
 
     output:
-                            X_train: X training data
-                            X_test: X testing data
+                            x_train: X training data
+                            x_test: X testing data
                             y_train: y training data
                             y_test: y testing data
     '''
@@ -161,10 +163,10 @@ def perform_feature_engineering(df, response="Churn"):
     X = pd.DataFrame()
     X[keep_cols] = df[keep_cols]
     y = df[response]
-    X_train, X_test, y_train, y_test = train_test_split(
+    x_train, x_test, y_train, y_test = train_test_split(
         X, y, test_size=0.3, random_state=42)
 
-    return X_train, X_test, y_train, y_test
+    return x_train, x_test, y_train, y_test
 
 
 def classification_report_image(y_train,
@@ -189,7 +191,7 @@ def classification_report_image(y_train,
     '''
     # RANDOM FOREST
     plt.figure(figsize=(6, 6))
-    plt.rc('figure', figsize=(6, 6))
+    # plt.rc('figure', figsize=(6, 6))
     plt.text(0.01, 1.25, str('Random Forest Train'), {
              'fontsize': 10}, fontproperties='monospace')
     plt.text(0.01, 0.05, str(classification_report(y_test, y_test_preds_rf)), {
@@ -203,7 +205,7 @@ def classification_report_image(y_train,
 
     # LOGISTIC REGRESSION
     plt.figure(figsize=(6, 6))
-    plt.rc('figure', figsize=(6, 6))
+    # plt.rc('figure', figsize=(6, 6))
     plt.text(0.01, 1.25, str('Logistic Regression Train'),
              {'fontsize': 10}, fontproperties='monospace')
     plt.text(0.01, 0.05, str(classification_report(y_train, y_train_preds_lr)), {
@@ -252,12 +254,12 @@ def feature_importance_plot(model, X_data, output_pth="./images/results/"):
     plt.savefig(fname=os.path.join(output_pth, 'feature_importance.png'))
 
 
-def train_models(X_train, X_test, y_train, y_test):
+def train_models(x_train, x_test, y_train, y_test):
     '''
     train, store model results: images + scores, and store models
     input:
-                X_train: X training data
-                X_test: X testing data
+                x_train: X training data
+                x_test: X testing data
                 y_train: y training data
                 y_test: y testing data
     output:
@@ -276,17 +278,24 @@ def train_models(X_train, X_test, y_train, y_test):
         param_grid=param_grid,
         cv=3,
         n_jobs=-1)
-    cv_rfc.fit(X_train, y_train)
-    lrc.fit(X_train, y_train)
+    cv_rfc.fit(x_train, y_train)
+    lrc.fit(x_train, y_train)
 
     joblib.dump(cv_rfc.best_estimator_, './models/rfc_model.pkl')
     joblib.dump(lrc, './models/logistic_model.pkl')
 
-    y_train_preds_rf = cv_rfc.best_estimator_.predict(X_train)
-    y_test_preds_rf = cv_rfc.best_estimator_.predict(X_test)
+    y_train_preds_rf = cv_rfc.best_estimator_.predict(x_train)
+    y_test_preds_rf = cv_rfc.best_estimator_.predict(x_test)
 
-    y_train_preds_lr = lrc.predict(X_train)
-    y_test_preds_lr = lrc.predict(X_test)
+    y_train_preds_lr = lrc.predict(x_train)
+    y_test_preds_lr = lrc.predict(x_test)
+
+    # Compute ROC curve
+    plt.figure(figsize=(15, 8))
+    axis = plt.gca()
+    plot_roc_curve(lrc, x_test, y_test, ax=axis, alpha=0.8)
+    plot_roc_curve(cv_rfc.best_estimator_, x_test, y_test, ax=axis, alpha=0.8)
+    plt.savefig(fname='./images/results/roc_curve.png')
 
     classification_report_image(
         y_train,
@@ -296,11 +305,11 @@ def train_models(X_train, X_test, y_train, y_test):
         y_test_preds_lr,
         y_test_preds_rf)
 
-    feature_importance_plot(cv_rfc, X_test)
+    feature_importance_plot(cv_rfc, x_test)
 
 
 if __name__ == "__main__":
-    df = import_data("./data/bank_data.csv")
-    eda_df = perform_eda(df)
-    X_train, X_test, y_train, y_test = perform_feature_engineering(eda_df)
-    train_models(X_train, X_test, y_train, y_test)
+    DF = import_data("./data/bank_data.csv")
+    EDA_DF = perform_eda(DF)
+    X_TRAIN, X_TEST, Y_TRAIN, Y_TEST = perform_feature_engineering(EDA_DF)
+    train_models(X_TRAIN, X_TEST, Y_TRAIN, Y_TEST)
